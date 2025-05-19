@@ -2,6 +2,7 @@
 # GLOBALS                                                                       #
 #################################################################################
 
+SHELL := /bin/bash
 PROJECT_NAME = scipeds
 PYTHON_VERSION = 3.11.10
 PYTHON_INTERPRETER = python
@@ -13,8 +14,11 @@ PYTHON_INTERPRETER = python
 ## Set up python interpreter environment
 .PHONY: create_environment
 create_environment:
-	conda create --name $(PROJECT_NAME) python=$(PYTHON_VERSION) -y
-	@echo ">>> conda env created. Activate with:\nconda activate $(PROJECT_NAME)"
+	@eval "$$(micromamba shell hook -s bash)"
+	micromamba create --name $(PROJECT_NAME) python=$(PYTHON_VERSION) -y
+# create_environment:
+# 	conda create --name $(PROJECT_NAME) python=$(PYTHON_VERSION) -y
+# 	@echo ">>> conda env created. Activate with:\nconda activate $(PROJECT_NAME)"
 
 ## Install Python Dependencies
 .PHONY: requirements
@@ -36,7 +40,7 @@ lint:
 
 ## Build distribution packages
 .PHONY: build
-build: 
+build:
 	python -m build
 	ls -l dist
 
@@ -64,7 +68,7 @@ test-pipeline:
 .PHONY: test-coverage
 test-coverage:
 	coverage run -m pytest pipeline/ scipeds/
-	coverage report -m 
+	coverage report -m
 
 ## Generate test assets
 .PHONY: test-assets
